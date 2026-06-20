@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETC System — Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+
+ <!-- ── SIDEBAR ─────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ETC System</div>
+          <div class="logo-sub">Traffic Analysis</div>
+        </div>
+      </div>
+    </div>
+ 
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="/" class="active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/threat_intel">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Threat Intel
+      </a>
+      <a href="/analytics">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Analytics
+      </a>
+ 
+      <div class="nav-label" style="margin-top:20px;">Info</div>
+      <a href="/about-project">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        About Project
+      </a>
+      <a href="/about-dataset">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        About Dataset
+      </a>
+    </nav>
+ 
+    <div class="sidebar-footer">
+      <p>Dataset: <span>ISCX-VPN-2016</span></p>
+      <p style="margin-top:4px;">Model: <span id="sidebarModel">Random Forest</span></p>
+    </div>
+  </aside>
+
+  
+  <!-- ── MAIN ────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Traffic Classification Dashboard</h1>
+        <p>Flow-based encrypted network traffic analysis · ISCX-VPN-NonVPN-2016</p>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        System Ready
+      </div>
+    </div>
+
+    <!-- Step Tracker -->
+    <div class="step-tracker">
+      <div class="step active" id="step1">
+        <div class="step-circle">1</div>
+        <div class="step-text">Upload CSV</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step" id="step2">
+        <div class="step-circle">2</div>
+        <div class="step-text">Select Model</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3">
+        <div class="step-circle">3</div>
+        <div class="step-text">Run Classification</div>
+      </div>
+      <div class="step-line" id="line3"></div>
+      <div class="step" id="step4">
+        <div class="step-circle">4</div>
+        <div class="step-text">View Results</div>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <section class="kpi-section">
+      <div class="kpi-card accuracy">
+        <div class="kpi-icon">
+          <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="kpi-label">Accuracy</div>
+        <div class="kpi-value pending" id="accuracy">—</div>
+      </div>
+      <div class="kpi-card precision">
+        <div class="kpi-icon">
+          <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div class="kpi-label">Precision</div>
+        <div class="kpi-value pending" id="precision">—</div>
+      </div>
+      <div class="kpi-card recall">
+        <div class="kpi-icon">
+          <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </div>
+        <div class="kpi-label">Recall</div>
+        <div class="kpi-value pending" id="recall">—</div>
+      </div>
+      <div class="kpi-card f1">
+        <div class="kpi-icon">
+          <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div class="kpi-label">F1 Score</div>
+        <div class="kpi-value pending" id="f1">—</div>
+      </div>
+    </section>
+
+    <!-- Main Grid Row 1 -->
+    <div class="dashboard-grid">
+
+      <!-- Traffic Pie Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Traffic Distribution</span>
+          <span class="card-badge" id="totalFlowsBadge">Awaiting data</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" id="chartWrap">
+            <div class="chart-placeholder" id="chartPlaceholder">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+              </svg>
+              <p>Run classification to see distribution</p>
+            </div>
+            <canvas id="trafficChart" style="display:none;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload + Model Selection -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Run Classification</span>
+        </div>
+        <div class="card-body">
+
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept=".csv" onchange="onFileChange(this)">
+            <div class="upload-icon">
+              <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="16 16 12 12 8 16"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <h3>Drop CSV file here</h3>
+            <p>or click to browse · .csv files only</p>
+          </div>
+
+          <div class="file-selected" id="fileSelected">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span id="fileName">file.csv</span>
+          </div>
+
+          <!-- Model Toggle -->
+          <div style="margin-top:16px;">
+            <div class="model-toggle-label">Select Model</div>
+            <div class="model-toggle-group">
+
+              <button class="model-btn selected" id="btnRF" onclick="selectModel('rf')">
+                <div class="model-btn-icon">🌲</div>
+                <div class="model-btn-name">Random Forest</div>
+                <div class="model-btn-desc">Ensemble · Robust</div>
+              </button>
+
+              <button class="model-btn" id="btnXGB" onclick="selectModel('xgb')">
+                <div class="model-btn-icon">⚡</div>
+                <div class="model-btn-name">XGBoost</div>
+                <div class="model-btn-desc">Boosted · Fast</div>
+              </button>
+
+              <!-- 🔥 NEW -->
+              <button class="model-btn" id="btnLGBM" onclick="selectModel('lgbm')">
+                <div class="model-btn-icon">🌿</div>
+                <div class="model-btn-name">LightGBM</div>
+                <div class="model-btn-desc">Fast · Efficient</div>
+              </button>
+
+            </div>
+          </div>
+
+<!-- 🔥 ACTION BUTTONS ROW -->
+<div style="display:flex; gap:10px; margin-top:12px;">
+
+  <!-- 🟢 SINGLE MODEL -->
+  <button class="run-btn" id="runBtn" onclick="uploadFile()" style="flex:1;">
+  <span class="btn-text">▶ Run Classification</span>
+  </button>
+
+  <!-- 🔵 ALL MODELS -->
+  <button class="run-btn" onclick="runAllModels()" style="flex:1; background:#111827;">
+    ⚡ Run All Models
+  </button>
+
+</div>
+
+<!-- 🟢 VIEW REPORT (FULL WIDTH BELOW) -->
+<button id="viewReportBtn"
+  class="run-btn disabled-btn"
+  onclick="openReport()"
+  style="margin-top:10px;">
+  📊 View Report
+</button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid Row 2 -->
+    <div class="dashboard-bottom">
+
+      <!-- Bar Chart: Traffic Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Traffic Type Breakdown</span>
+          <span class="card-badge">By Count</span>
+        </div>
+        <div class="card-body">
+          <div id="barChartWrap">
+            <div class="results-empty">
+              <p>No data yet — run classification first</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat -->
+      <!-- Chat -->
+    <div class="card">
+
+    <div class="card-header">
+        <span class="card-title">AI Assistant</span>
+        <span class="card-badge" style="background:#e6faf7;color:var(--accent-secondary);">Online</span>
+    </div>
+
+    <div class="card-body" style="display:flex;flex-direction:column;height:100%;">
+
+        <!-- Suggested Questions -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+
+        <button class="suggest-btn" onclick="sendMessage('What is the dominant traffic type?')">
+            Dominant Traffic
+        </button>
+
+        <button class="suggest-btn" onclick="sendMessage('Explain the traffic distribution results')">
+            Explain Results
+        </button>
+
+        <button class="suggest-btn" onclick="sendMessage('Is this network safe based on the classification?')">
+            Security Insight
+        </button>
+
+        <button class="suggest-btn" onclick="sendMessage('Explain the model accuracy and performance')">
+            Model Performance
+        </button>
+
+        </div>
+
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatBox">
+        <div class="chat-bubble empty">
+            Ask me anything about your traffic results…
+        </div>
+        </div>
+
+
+        <!-- Input -->
+        <div class="chat-input-row">
+
+        <input
+            type="text"
+            id="chatInput"
+            placeholder="Ask about traffic results..."
+            onkeydown="if(event.key==='Enter'){sendMessage()}"
+        >
+
+        <button class="chat-send-btn" onclick="sendMessage()">
+
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+
+        </button>
+
+        </div>
+
+    </div>
+
+    </div>
+
+</div>
+
+    <!-- Results Summary -->
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-header">
+        <span class="card-title">Classification Summary</span>
+        <span class="card-badge" id="modelBadge">Random Forest</span>
+      </div>
+      <div class="card-body">
+        <div id="results">
+          <div class="results-empty">No analysis performed yet. Upload a CSV and run classification to see results.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+</body>
+</html>

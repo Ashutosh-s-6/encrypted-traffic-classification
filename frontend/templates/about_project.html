@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Project — ETC System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    /* ── Page-specific styles ── */
+    .about-hero {
+      background: linear-gradient(135deg, #0d1b2a 0%, #0a2540 60%, #0d1b2a 100%);
+      border-radius: var(--radius-lg);
+      padding: 52px 48px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,87,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .about-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 30%;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,196,167,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0,87,255,0.2);
+      border: 1px solid rgba(0,87,255,0.4);
+      color: #7aadff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 13px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .hero-tag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #7aadff;
+    }
+
+    .about-hero h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      max-width: 560px;
+    }
+
+    .about-hero h1 span {
+      color: #5b9fff;
+    }
+
+    .about-hero p {
+      font-size: 0.97rem;
+      color: #94adbf;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .chip {
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .chip-blue  { background: rgba(0,87,255,0.15); border-color: rgba(0,87,255,0.35); color: #7aadff; }
+    .chip-teal  { background: rgba(0,196,167,0.12); border-color: rgba(0,196,167,0.3); color: #4dd8c0; }
+    .chip-amber { background: rgba(255,170,0,0.12); border-color: rgba(255,170,0,0.3); color: #ffc94d; }
+    .chip-violet{ background: rgba(155,92,246,0.12); border-color: rgba(155,92,246,0.3); color: #c4a0ff; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+
+    .section-sub {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* ── Objective cards ── */
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .obj-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .obj-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .obj-num {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      margin-bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .obj-card h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: var(--text-primary);
+    }
+
+    .obj-card p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Pipeline ── */
+    .pipeline {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-top: 4px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 22px;
+      right: -1px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--border));
+      z-index: 0;
+    }
+
+    .pipeline-circle {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      margin: 0 auto 10px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 4px #e8efff;
+    }
+
+    .pipeline-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .pipeline-desc {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ── Model comparison table ── */
+    .model-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    .model-table th {
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-secondary);
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--border);
+      background: var(--bg-elevated);
+    }
+
+    .model-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      vertical-align: top;
+    }
+
+    .model-table tr:last-child td { border-bottom: none; }
+
+    .model-table tr:hover td { background: var(--bg-elevated); }
+
+    .model-name {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tag-good { background: #e6faf7; color: #009e85; font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+    .tag-fast { background: #fff8e6; color: #b87800; font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+
+    /* ── Tech stack ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .tech-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .tech-icon { font-size: 1.6rem; margin-bottom: 7px; }
+    .tech-name { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); }
+    .tech-role { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+
+    /* ── Two-col layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 20px; }
+
+    /* ── Insight list ── */
+    .insight-list { list-style: none; }
+    .insight-list li {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .insight-list li:last-child { border-bottom: none; }
+    .insight-list li::before {
+      content: '→';
+      color: var(--accent-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Stat boxes ── */
+    .stat-row { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat-box {
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-box-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-primary);
+      line-height: 1;
+    }
+    .stat-box-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* ── Page spacing ── */
+    .page-section { margin-bottom: 28px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ETC System</div>
+          <div class="logo-sub">Traffic Analysis</div>
+        </div>
+      </div>
+    </div>
+        <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="/" >
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/threat_intel" >
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Threat Intel
+      </a>
+      <a href="/analytics" >
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Analytics
+      </a>
+      <div class="nav-label" style="margin-top:20px;">Info</div>
+      <a href="/about-project" class="active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        About Project
+      </a>
+      <a href="/about-dataset">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        About Dataset
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <p>Dataset: <span>ISCX-VPN-2016</span></p>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom:24px;">
+      <div class="page-header-left">
+        <h1>About the Project</h1>
+        <p>Architecture, objectives, and methodology of the ETC System</p>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        Research Project
+      </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <div class="about-hero page-section">
+      <div class="hero-tag"><div class="hero-tag-dot"></div>Final Year Project</div>
+      <h1>Encrypted Traffic <span>Classification</span> Using Machine Learning</h1>
+      <p>
+        A flow-based machine learning system that classifies encrypted network traffic 
+        without payload inspection — preserving privacy while enabling deep network 
+        visibility using statistical flow features extracted from PCAP captures.
+      </p>
+      <div class="hero-chips">
+        <span class="chip chip-blue">Random Forest</span>
+        <span class="chip chip-teal">XGBoost</span>
+        <span class="chip chip-amber">Flow-Based Analysis</span>
+        <span class="chip chip-violet">ISCX-VPN-NonVPN-2016</span>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stat-row page-section">
+      <div class="stat-box">
+        <div class="stat-box-value">14</div>
+        <div class="stat-box-label">Traffic Classes</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">80+</div>
+        <div class="stat-box-label">Flow Features</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">2</div>
+        <div class="stat-box-label">ML Models</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">~99%</div>
+        <div class="stat-box-label">Accuracy (RF)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">0</div>
+        <div class="stat-box-label">Payload Inspection</div>
+      </div>
+    </div>
+
+    <!-- Problem + Motivation -->
+    <div class="two-col page-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Problem Statement</span>
+        </div>
+        <div class="card-body">
+          <ul class="insight-list">
+            <li>Traditional DPI (Deep Packet Inspection) cannot classify encrypted traffic such as TLS/HTTPS — payload is hidden by design.</li>
+            <li>VPN traffic obscures application identity, making conventional signature-based classification ineffective.</li>
+            <li>Network administrators need visibility into traffic types for QoS, security policy enforcement, and anomaly detection.</li>
+            <li>A privacy-preserving classification method is needed that works on flow-level metadata rather than packet payloads.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Our Approach</span>
+        </div>
+        <div class="card-body">
+          <ul class="insight-list">
+            <li>Extract statistical flow features (inter-packet timing, packet lengths, byte ratios) from raw network captures using CICFlowMeter.</li>
+            <li>Train ensemble classifiers (Random Forest, XGBoost) on labelled ISCX-VPN-2016 flows — no payload required.</li>
+            <li>Classify uploaded CSVs in real time via a Flask web dashboard, displaying distribution, metrics, and per-class breakdown.</li>
+            <li>Provide an AI assistant for result interpretation, enabling non-expert users to understand the output.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <div class="page-section">
+      <div class="section-heading">Project Objectives</div>
+      <div class="section-sub">Core goals this system is designed to achieve</div>
+      <div class="objectives-grid">
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 01</div>
+          <h3>Flow-Level Feature Extraction</h3>
+          <p>Extract 80+ statistical features from PCAP captures — packet length distributions, IAT stats, flag counts, flow duration — without accessing payload content.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 02</div>
+          <h3>Multi-Class Traffic Classification</h3>
+          <p>Distinguish 14 traffic categories including VPN and non-VPN variants of streaming, browsing, chat, VOIP, file transfer, and email.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 03</div>
+          <h3>Model Benchmarking</h3>
+          <p>Compare Random Forest and XGBoost on accuracy, precision, recall, and F1 — identifying the best classifier for encrypted traffic scenarios.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 04</div>
+          <h3>Real-Time Web Classification</h3>
+          <p>Deploy a Flask dashboard that accepts any CICFlowMeter-generated CSV and returns full classification results within seconds.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 05</div>
+          <h3>Interactive Result Visualisation</h3>
+          <p>Present traffic distribution, per-class breakdowns, and performance metrics through an interactive, enterprise-grade dashboard UI.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">OBJ — 06</div>
+          <h3>Accessible AI Interpretation</h3>
+          <p>Embed a context-aware AI assistant that explains classification results in plain language, making the system accessible to non-expert network users.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="card page-section">
+      <div class="card-header">
+        <span class="card-title">System Pipeline</span>
+        <span class="card-badge">End-to-End Flow</span>
+      </div>
+      <div class="card-body">
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-circle">📡</div>
+            <div class="pipeline-label">Traffic Capture</div>
+            <div class="pipeline-desc">Raw PCAP files from network interfaces</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-circle">⚙️</div>
+            <div class="pipeline-label">Feature Extraction</div>
+            <div class="pipeline-desc">CICFlowMeter generates 80+ flow features</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-circle">🧹</div>
+            <div class="pipeline-label">Preprocessing</div>
+            <div class="pipeline-desc">Scaling, NaN removal, label encoding</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-circle">🌲</div>
+            <div class="pipeline-label">Model Training</div>
+            <div class="pipeline-desc">RF / XGBoost trained on ISCX-VPN-2016</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-circle">🔍</div>
+            <div class="pipeline-label">Classification</div>
+            <div class="pipeline-desc">Uploaded CSV classified in real time</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-circle">📊</div>
+            <div class="pipeline-label">Visualisation</div>
+            <div class="pipeline-desc">Dashboard shows metrics + distribution</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Comparison -->
+    <div class="card page-section">
+      <div class="card-header">
+        <span class="card-title">Model Comparison</span>
+        <span class="card-badge">RF vs XGBoost</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table class="model-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Type</th>
+              <th>Strengths</th>
+              <th>Limitations</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="model-name">🌲 Random Forest <span class="tag-good">Robust</span></div></td>
+              <td>Bagging Ensemble</td>
+              <td>Handles noisy features well, resistant to overfitting, fast inference, strong out-of-the-box performance on tabular data</td>
+              <td>Large memory footprint at scale, less accurate on imbalanced classes without tuning</td>
+              <td>General-purpose classification, interpretability via feature importance</td>
+            </tr>
+            <tr>
+              <td><div class="model-name">⚡ XGBoost <span class="tag-fast">Fast</span></div></td>
+              <td>Boosting Ensemble</td>
+              <td>Excellent on imbalanced datasets, built-in regularisation, very high accuracy with tuning, handles missing values natively</td>
+              <td>More hyperparameters to tune, slower to train than Random Forest</td>
+              <td>Competitive accuracy benchmarking, imbalanced traffic class distributions</td>
+            </tr>
+
+            <tr>
+  <td>
+    <div class="model-name">
+      🌿 LightGBM <span class="tag-fast">Efficient</span>
+    </div>
+  </td>
+  <td>Gradient Boosting</td>
+  <td>
+    Extremely fast training, handles large datasets efficiently,
+    better memory optimization, high accuracy in structured data
+  </td>
+  <td>
+    Can overfit on small datasets, sensitive to noisy features,
+    less interpretable compared to Random Forest
+  </td>
+  <td>
+    Large-scale data, real-time systems, production environments
+  </td>
+</tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+<div class="card page-section">
+  <div class="card-header">
+    <span class="card-title">🧠 Key Insights</span>
+  </div>
+  <div class="card-body">
+    <ul class="insight-list">
+      <li>LightGBM generally provides the best performance due to efficient leaf-wise tree growth.</li>
+      <li>Random Forest is more stable and resistant to noisy features but may miss complex patterns.</li>
+      <li>XGBoost performs well on imbalanced datasets due to its boosting strategy.</li>
+      <li>F1 Score is the most important metric in this system as it balances precision and recall.</li>
+    </ul>
+  </div>
+</div>    
+
+    <!-- Tech Stack -->
+    <div class="page-section">
+      <div class="section-heading">Technology Stack</div>
+      <div class="section-sub">Tools and libraries powering the ETC System</div>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-icon">🐍</div>
+          <div class="tech-name">Python 3.10</div>
+          <div class="tech-role">Core language</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🌶️</div>
+          <div class="tech-name">Flask</div>
+          <div class="tech-role">Web framework</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🌲</div>
+          <div class="tech-name">scikit-learn</div>
+          <div class="tech-role">Random Forest, metrics</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">⚡</div>
+          <div class="tech-name">XGBoost</div>
+          <div class="tech-role">Gradient boosting</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🐼</div>
+          <div class="tech-name">Pandas</div>
+          <div class="tech-role">Data preprocessing</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🔢</div>
+          <div class="tech-name">NumPy</div>
+          <div class="tech-role">Numerical operations</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">📊</div>
+          <div class="tech-name">Chart.js</div>
+          <div class="tech-role">Frontend charts</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🌐</div>
+          <div class="tech-name">CICFlowMeter</div>
+          <div class="tech-role">Feature extraction</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

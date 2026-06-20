@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threat Intelligence — ETC System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/threat_intel.css') }}">
+</head>
+<body>
+<div class="container">
+
+  <!-- ── SIDEBAR ─────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ETC System</div>
+          <div class="logo-sub">Traffic Analysis</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="/">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/threat_intel" class="active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Threat Intel
+      </a>
+      <a href="/analytics">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Analytics
+      </a>
+      <div class="nav-label" style="margin-top:20px;">Info</div>
+      <a href="/about_project">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        About Project
+      </a>
+      <a href="/about_dataset">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        About Dataset
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <p>Dataset: <span>ISCX-VPN-2016</span></p>
+      <p style="margin-top:4px;">Last scan: <span id="lastScanTime">—</span></p>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Threat Intelligence</h1>
+        <p>Flow-level entity risk analysis · per-IP and per-flow breakdown</p>
+      </div>
+      <div id="overallRiskPill" class="overall-risk-pill risk-pending">
+        <span class="risk-pill-dot"></span>
+        <span id="overallRiskLabel">Awaiting analysis</span>
+      </div>
+    </div>
+
+    <!-- No-data banner (shown until results arrive) -->
+    <div class="no-data-banner" id="noDataBanner">
+      <div class="no-data-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <h3>No threat data yet</h3>
+        <p>Run a classification on the <a href="/">Dashboard</a> first, then return here to see the full entity-level risk report.</p>
+      </div>
+    </div>
+
+    <!-- ── RESULTS (hidden until data loaded) ── -->
+    <div id="threatResults" style="display:none;">
+
+      <!-- Risk KPI row -->
+      <div class="risk-kpi-row">
+        <div class="risk-kpi-card high">
+          <div class="risk-kpi-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="risk-kpi-value" id="highCount">0</div>
+          <div class="risk-kpi-label">High Risk</div>
+        </div>
+        <div class="risk-kpi-card medium">
+          <div class="risk-kpi-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="risk-kpi-value" id="medCount">0</div>
+          <div class="risk-kpi-label">Medium Risk</div>
+        </div>
+        <div class="risk-kpi-card low">
+          <div class="risk-kpi-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="risk-kpi-value" id="lowCount">0</div>
+          <div class="risk-kpi-label">Low Risk</div>
+        </div>
+        <div class="risk-kpi-card info">
+          <div class="risk-kpi-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="risk-kpi-value" id="entityCount">0</div>
+          <div class="risk-kpi-label">Total Entities</div>
+        </div>
+      </div>
+
+      <!-- Two-col: Suspicious entities + Risk by traffic type -->
+      <div class="threat-grid">
+
+        <!-- Suspicious Entities -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="threat-dot-red"></span>
+              Suspicious Entities
+            </span>
+            <span class="card-badge threat-badge-red" id="suspiciousCount">0 flagged</span>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div id="suspiciousEntities">
+              <div class="results-empty" style="padding:24px;">No suspicious entities detected.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk by Traffic Type -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Risk by Traffic Type</span>
+            <span class="card-badge">Classification</span>
+          </div>
+          <div class="card-body">
+            <div id="riskTypeBreakdown">
+              <div class="results-empty">No data available.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Full entity table -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <span class="card-title">Entity Analysis Table</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select class="table-filter-select" id="riskFilter" onchange="filterTable()">
+              <option value="all">All risk levels</option>
+              <option value="High">High only</option>
+              <option value="Medium">Medium only</option>
+              <option value="Low">Low only</option>
+            </select>
+            <span class="card-badge" id="tableCountBadge">0 entities</span>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="entityTableWrap">
+            <div class="results-empty" style="padding:28px 22px;">No entities to display.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /threatResults -->
+
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/threat_intel.js') }}"></script>
+</body>
+</html>

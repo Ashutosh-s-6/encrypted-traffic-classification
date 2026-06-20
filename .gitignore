@@ -1,0 +1,25 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment Variables
+.env
+
+# VS Code
+.vscode/
+
+# Uploads
+data/uploads/
+
+# Datasets
+data/
+backend/data/
+
+# ML Models
+backend/saved_models/
+*.pkl

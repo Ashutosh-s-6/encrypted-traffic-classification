@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Model Intelligence Report | ML Comparison + Mechanics</title>
+  <!-- Google Font & Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f4f7fc 0%, #eef2f5 100%);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 32px 24px;
+      color: #1a2c3e;
+    }
+
+    .report-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* modern glassmorphic cards */
+    .card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 28px;
+      padding: 1.6rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 32px -12px rgba(0, 0, 0, 0.12);
+    }
+
+    .report-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1F2B3C, #2C4C6E);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .report-sub {
+      color: #54738f;
+      border-left: 3px solid #3b82f6;
+      padding-left: 16px;
+      margin-bottom: 28px;
+      font-weight: 450;
+      font-size: 0.95rem;
+    }
+
+    .best-model {
+      background: linear-gradient(120deg, #f0fdf4 0%, #e6f9ef 100%);
+      border-left: 8px solid #16a34a;
+      border-radius: 28px;
+    }
+
+    .insight {
+      background: #fefce8;
+      border-left: 8px solid #eab308;
+    }
+
+    .mechanics-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      border-left: 8px solid #8b5cf6;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* table elegance */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      padding: 14px 12px;
+      font-weight: 600;
+      color: #0f2b3d;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+      padding: 14px 12px;
+      text-align: center;
+      border-bottom: 1px solid #edf2f7;
+      font-weight: 500;
+    }
+
+    tr:hover td {
+      background-color: #fafcff;
+    }
+
+    .good {
+      color: #16a34a;
+      font-weight: 700;
+      background: #eef9ef;
+      border-radius: 40px;
+      display: inline-block;
+      padding: 4px 12px;
+    }
+
+    .metric-badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 2px 10px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .best-per-metric {
+      background: #d9f99d;
+      color: #2c5f2d;
+      font-weight: 700;
+      border-radius: 24px;
+      padding: 4px 10px;
+      display: inline-block;
+      font-size: 0.75rem;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    ul, .mechanics-list {
+      padding-left: 1.4rem;
+      list-style-type: none;
+    }
+
+    li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+
+    li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+
+    .insight li::before {
+      color: #eab308;
+    }
+
+    .mechanics-list li::before {
+      color: #8b5cf6;
+    }
+
+    .chart-container {
+      margin: 20px 0 8px;
+      height: 360px;
+      position: relative;
+    }
+
+    .demo-note {
+      background: #fff7e5;
+      border-radius: 20px;
+      padding: 12px 20px;
+      margin-bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #b45309;
+    }
+
+    .highlight-box {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 1rem 1.4rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      border-left: 4px solid #8b5cf6;
+    }
+
+    .tree-icon {
+      font-size: 1.3rem;
+      vertical-align: middle;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #6b7f8f;
+      margin-top: 2rem;
+      border-top: 1px solid #dce5ec;
+      padding-top: 1.5rem;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 18px;
+      }
+      .card {
+        padding: 1.2rem;
+      }
+      h3 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="report-container">
+  <div class="report-title">
+    📊 Model Intelligence Report
+    <span style="font-size: 0.8rem; background: #e2e8f0; padding: 4px 12px; border-radius: 60px; font-weight: 500;">ensemble benchmark</span>
+  </div>
+  <div class="report-sub">🔍 multi‑metric evaluation · dynamic insights · production‑ready comparison</div>
+
+  <div id="dataSourceNote" class="demo-note" style="display: none;">⚡ using live session data</div>
+
+  <!-- 🏆 BEST MODEL CARD -->
+  <div class="card best-model" id="bestModelCard">
+    <h3>🏆 Champion Model</h3>
+    <div id="bestModelText" style="font-size: 1.1rem; line-height: 1.4;">Loading performance metrics...</div>
+    <div id="bestModelDetail" style="margin-top: 12px; font-size: 0.9rem; color: #2b6e3b;"></div>
+  </div>
+
+  <!-- 📊 INTERACTIVE CHART CARD -->
+  <div class="card">
+    <h3>📊 Multi‑Metric Comparison Chart</h3>
+    <div class="chart-container">
+      <canvas id="metricsChart" width="800" height="400" style="max-height: 360px; width: 100%;"></canvas>
+    </div>
+    <p style="font-size: 0.75rem; color: #5a6e7c; margin-top: 10px;">⬤ Grouped bar chart: Accuracy, Precision, Recall, F1-score — higher is better</p>
+  </div>
+
+  <!-- 📈 TABLE CARD -->
+  <div class="card">
+    <h3>📈 Performance Matrix</h3>
+    <div class="table-wrapper">
+      <div id="comparisonTable"></div>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.75rem; color: #467392;">★ best score per metric • F1-score defines champion</div>
+  </div>
+
+  <!-- 🧠 NEW SECTION: WHAT IS ACTUALLY HAPPENING (Model Mechanics) -->
+  <div class="card mechanics-card">
+    <h3>🧠 What Is Actually Happening — Bagging vs Boosting</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.8rem;">
+      <!-- Random Forest (Bagging) -->
+      <div style="flex: 1; min-width: 240px;">
+        <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 12px;">🌲 Random Forest <span style="font-size:0.8rem; background:#e2e3e8; padding:2px 8px; border-radius:40px;">Bagging</span></div>
+        <ul class="mechanics-list" style="margin-bottom: 0;">
+          <li>Many trees trained <strong>independently in parallel</strong></li>
+          <li>Each tree sees a random sample (rows + features)</li>
+          <li>Final output = <strong>majority voting / averaging</strong></li>
+          <li><strong>Focus:</strong> overall correctness (high accuracy)</li>
+          <li><strong>Weakness:</strong> can miss rare/minority classes → lower recall</li>
+          <li><strong>Best for:</strong> noisy data, interpretability, stable baseline</li>
+        </ul>
+      </div>
+      <!-- Boosting (XGBoost / LightGBM) -->
+      <div style="flex: 1; min-width: 240px;">
+        <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 12px;">⚡ XGBoost / 🌿 LightGBM <span style="font-size:0.8rem; background:#e2e3e8; padding:2px 8px; border-radius:40px;">Boosting</span></div>
+        <ul class="mechanics-list" style="margin-bottom: 0;">
+          <li>Models trained <strong>sequentially</strong> — each corrects previous mistakes</li>
+          <li>Later trees focus on <strong>hard-to-classify samples</strong></li>
+          <li><strong>Key difference:</strong> XGBoost = level-wise growth, LightGBM = <strong class="highlight-text">leaf-wise growth</strong></li>
+          <li>Leaf-wise: grows the leaf with highest loss reduction → deeper focus on difficult cases</li>
+          <li>Excels at capturing complex patterns + <strong>minority classes</strong></li>
+        </ul>
+      </div>
+      <!-- Why LightGBM wins -->
+      <div style="flex: 1; min-width: 240px; background: #f1f5f9; border-radius: 24px; padding: 1rem;">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 12px;">🌿 Why LightGBM often wins</div>
+        <ul class="mechanics-list" style="margin-bottom: 0;">
+          <li><strong>Leaf‑wise growth</strong> → builds deeper, more expressive trees</li>
+          <li>Naturally focuses on <strong>misclassified / rare events</strong></li>
+          <li>Higher <strong>recall + F1</strong> without sacrificing too much precision</li>
+          <li>Faster training & lower memory for large datasets</li>
+          <li>In your report: LightGBM achieved highest F1 because it captured hard samples better</li>
+        </ul>
+        <div class="highlight-box" style="margin-top: 12px; background:#ffffff;">
+          📌 <strong>Leaf‑wise vs Level‑wise</strong><br>
+          Level-wise (XGBoost): balanced, grows all leaves equally → safer but less aggressive.<br>
+          Leaf-wise (LightGBM): grows most promising leaf first → more power on complex patterns.
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #2c5a74;">
+      💡 <strong>Bottom line:</strong> Random Forest = parallel voting for stability. Boosting = sequential error correction. LightGBM’s leaf-wise strategy gives it an edge on imbalanced or complex data — exactly why it's your champion.
+    </div>
+  </div>
+
+  <!-- TWO COLUMN: AI INSIGHT + MODEL BEHAVIOR -->
+  <div class="grid-2col">
+    <div class="card insight">
+      <h3>🧠 AI‑Driven Insight</h3>
+      <div id="aiInsight">Generating contextual analysis...</div>
+    </div>
+    <div class="card">
+      <h3>⚙️ Behavioral Signature</h3>
+      <div id="modelBehavior">Analyzing model trade‑offs...</div>
+    </div>
+  </div>
+
+  <!-- 🎯 RECOMMENDATION CARD -->
+  <div class="card">
+    <h3>🎯 Strategic Recommendation</h3>
+    <div id="recommendation"></div>
+  </div>
+  <footer>📌 based on classification metrics · F1-weighted champion · leaf‑wise vs level‑wise explained</footer>
+</div>
+
+<script>
+  (function() {
+    // ----- load data from sessionStorage or fallback demo data -----
+    let rawData = null;
+    let isDemoData = false;
+    try {
+      const stored = sessionStorage.getItem("multiModelResults");
+      if (stored && stored !== "undefined") {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.rf || parsed.xgb || parsed.lgbm)) {
+          rawData = parsed;
+        }
+      }
+    } catch(e) { console.warn("sessionStorage parse error", e); }
+
+    // Fallback demo data (realistic metrics)
+    if (!rawData) {
+      isDemoData = true;
+      rawData = {
+        rf: { metrics: { accuracy: 0.912, precision: 0.894, recall: 0.873, f1: 0.883 } },
+        xgb: { metrics: { accuracy: 0.928, precision: 0.912, recall: 0.901, f1: 0.906 } },
+        lgbm: { metrics: { accuracy: 0.941, precision: 0.925, recall: 0.937, f1: 0.931 } }
+      };
+    }
+
+    const noteDiv = document.getElementById("dataSourceNote");
+    if (isDemoData) {
+      noteDiv.style.display = "flex";
+      noteDiv.innerHTML = "📎 demo dataset active — to use real results, store 'multiModelResults' in sessionStorage";
+      noteDiv.style.background = "#eef2ff";
+      noteDiv.style.color = "#1e4a76";
+    } else {
+      noteDiv.style.display = "flex";
+      noteDiv.innerHTML = "✅ live model data — loaded from sessionStorage";
+      noteDiv.style.background = "#e0f2fe";
+      noteDiv.style.color = "#0369a1";
+    }
+
+    const modelKeys = ["rf", "xgb", "lgbm"];
+    const modelNames = { rf: "Random Forest", xgb: "XGBoost", lgbm: "LightGBM" };
+    
+  function getMetrics(modelKey) {
+
+    const m = rawData[modelKey];
+
+    if (!m) {
+      return { accuracy: 0, precision: 0, recall: 0, f1: 0 };
+    }
+
+    // ✅ SUPPORT BOTH FORMATS (OLD + NEW)
+    const source = m.metrics || m;
+
+    return {
+      accuracy: typeof source.accuracy === 'number' ? source.accuracy : 0,
+      precision: typeof source.precision === 'number' ? source.precision : 0,
+      recall: typeof source.recall === 'number' ? source.recall : 0,
+      f1: typeof source.f1 === 'number' ? source.f1 : 0
+    };
+  }
+
+    let modelsMetrics = {};
+    modelKeys.forEach(k => { modelsMetrics[k] = getMetrics(k); });
+
+    let bestModelKey = "rf";
+    let bestF1 = -1;
+    modelKeys.forEach(k => {
+      const f1 = modelsMetrics[k].f1;
+      if (f1 > bestF1) {
+        bestF1 = f1;
+        bestModelKey = k;
+      }
+    });
+
+    function bestPerMetric(metricName) {
+      let bestVal = -1;
+      let bestModel = null;
+      modelKeys.forEach(k => {
+        const val = modelsMetrics[k][metricName];
+        if (val > bestVal) { bestVal = val; bestModel = k; }
+      });
+      return { model: bestModel, value: bestVal };
+    }
+
+    const bestAccuracy = bestPerMetric("accuracy");
+    const bestPrecision = bestPerMetric("precision");
+    const bestRecall = bestPerMetric("recall");
+    const bestF1Stat = bestPerMetric("f1");
+
+    // ========== TABLE RENDER ==========
+    function renderTable() {
+      let html = `<table><thead><tr><th>Model</th><th>Accuracy ↑</th><th>Precision ↑</th><th>Recall ↑</th><th>F1 Score ↑</th></tr></thead><tbody>`;
+      modelKeys.forEach(m => {
+        const met = modelsMetrics[m];
+        const accPct = (met.accuracy * 100).toFixed(2);
+        const precPct = (met.precision * 100).toFixed(2);
+        const recPct = (met.recall * 100).toFixed(2);
+        const f1Pct = (met.f1 * 100).toFixed(2);
+        const isBestAcc = bestAccuracy.model === m;
+        const isBestPrec = bestPrecision.model === m;
+        const isBestRec = bestRecall.model === m;
+        const isBestF1 = bestF1Stat.model === m;
+        
+        html += `<tr>
+          <td style="font-weight:600;">${modelNames[m]}${m === bestModelKey ? ' 🏆' : ''}</td>
+          <td>${accPct}% ${isBestAcc ? '<span class="best-per-metric">★ best</span>' : ''}</td>
+          <td>${precPct}% ${isBestPrec ? '<span class="best-per-metric">★ best</span>' : ''}</td>
+          <td>${recPct}% ${isBestRec ? '<span class="best-per-metric">★ best</span>' : ''}</td>
+          <td style="font-weight:600; color:${isBestF1 ? '#15803d' : '#2c3e4e'}">${f1Pct}% ${isBestF1 ? '<span class="best-per-metric">champion</span>' : ''}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById("comparisonTable").innerHTML = html;
+    }
+
+    // ========== BEST MODEL CARD ==========
+    function updateBestModelCard() {
+      const bestMetrics = modelsMetrics[bestModelKey];
+      const bestF1Val = bestMetrics.f1 * 100;
+      const runnerUp = modelKeys.filter(k => k !== bestModelKey).reduce((prev, curr) => {
+        return modelsMetrics[curr].f1 > modelsMetrics[prev].f1 ? curr : prev;
+      }, modelKeys[0]);
+      const runnerUpF1 = modelsMetrics[runnerUp].f1 * 100;
+      const margin = (bestF1Val - runnerUpF1).toFixed(2);
+      
+      let detailHtml = `<div style="display:flex; flex-wrap:wrap; gap: 1rem; margin-top: 10px;">
+        <div><span class="metric-badge">⚡ F1 Score</span> <strong>${bestF1Val.toFixed(2)}%</strong> (${margin > 0 ? `+${margin}% vs 2nd` : 'tie'})</div>
+        <div><span class="metric-badge">🎯 Accuracy</span> <strong>${(bestMetrics.accuracy * 100).toFixed(2)}%</strong></div>
+        <div><span class="metric-badge">🔍 Precision/Recall</span> ${(bestMetrics.precision * 100).toFixed(1)}% / ${(bestMetrics.recall * 100).toFixed(1)}%</div>
+      </div>`;
+      
+      let balanceDesc = "";
+      const pDiff = Math.abs(bestMetrics.precision - bestMetrics.recall);
+      if (pDiff < 0.03) balanceDesc = "exceptionally balanced precision & recall → robust generalization.";
+      else if (bestMetrics.precision > bestMetrics.recall) balanceDesc = "higher precision than recall → lower false positives, may miss some positives.";
+      else balanceDesc = "higher recall than precision → catches most positives but more false alarms.";
+      
+      document.getElementById("bestModelText").innerHTML = `<b style="font-size:1.25rem;">${modelNames[bestModelKey]}</b> achieves top F1‑score (${bestF1Val.toFixed(2)}%) — most harmonic performance.`;
+      document.getElementById("bestModelDetail").innerHTML = detailHtml + `<div style="margin-top: 12px; font-size:0.85rem;">📌 ${balanceDesc}</div>`;
+    }
+
+    // ========== AI INSIGHT (data driven) ==========
+    function generateAIInsight() {
+      const best = bestModelKey;
+      const bestMetrics = modelsMetrics[best];
+      const others = modelKeys.filter(k => k !== best).map(k => ({ name: modelNames[k], f1: modelsMetrics[k].f1 }));
+      const avgOtherF1 = others.reduce((sum, o) => sum + o.f1, 0) / others.length;
+      const improvement = ((bestMetrics.f1 - avgOtherF1) / avgOtherF1 * 100).toFixed(1);
+      
+      let insightPoints = [];
+      insightPoints.push(`<li><strong>${modelNames[best]}</strong> outperforms average competitor by ${improvement}% in F1-score, showing superior precision‑recall harmony.</li>`);
+      
+      const allRecalls = modelKeys.map(k => modelsMetrics[k].recall);
+      const maxRecall = Math.max(...allRecalls);
+      const maxRecallModel = modelKeys.find(k => modelsMetrics[k].recall === maxRecall);
+      if (maxRecallModel !== best) {
+        insightPoints.push(`<li>⚠️ ${modelNames[maxRecallModel]} has the highest recall (${(maxRecall*100).toFixed(1)}%) → ideal when false negatives are critical.</li>`);
+      } else {
+        insightPoints.push(`<li>✅ Champion also leads in recall — excellent at detecting positive cases.</li>`);
+      }
+      
+      const bestPrecModel = bestPrecision.model;
+      if (bestPrecModel !== best && bestPrecision.value > bestMetrics.precision) {
+        insightPoints.push(`<li>🎯 ${modelNames[bestPrecModel]} offers superior precision (${(bestPrecision.value*100).toFixed(1)}%) — minimises false alarms.</li>`);
+      }
+      
+      const f1Values = modelKeys.map(k => modelsMetrics[k].f1);
+      const variance = f1Values.reduce((acc, val) => acc + Math.pow(val - (f1Values.reduce((a,b)=>a+b,0)/3),2),0)/3;
+      if (variance < 0.0005) insightPoints.push(`<li>⚖️ Models show very close F1 scores — ensemble voting could boost robustness.</li>`);
+      else insightPoints.push(`<li>📊 Performance spread is significant: choose model based on operational constraints.</li>`);
+      
+      return `<ul>${insightPoints.join('')}</ul>`;
+    }
+    
+    // ========== MODEL BEHAVIOR ==========
+    function getModelBehavior() {
+      let behaviorHtml = `<ul>`;
+      modelKeys.forEach(m => {
+        const met = modelsMetrics[m];
+        const precRecallGap = Math.abs(met.precision - met.recall);
+        let behaviorNote = "";
+        if (precRecallGap > 0.07) {
+          behaviorNote = met.precision > met.recall ? "precision‑dominant → conservative predictions." : "recall‑dominant → aggressive, captures more positives.";
+        } else {
+          behaviorNote = "balanced precision/recall → stable across classes.";
+        }
+        let special = "";
+        if (m === "rf") special = "Ensemble averaging reduces variance, robust on noisy features.";
+        if (m === "xgb") special = "Boosting corrects sequential errors, may overfit on small data. Level-wise growth.";
+        if (m === "lgbm") special = "Leaf‑wise growth + GOSS → fast training, excels on large volume & hard samples.";
+        behaviorHtml += `<li><strong>${modelNames[m]}</strong> — F1: ${(met.f1*100).toFixed(1)}% · ${behaviorNote}<br><span style="font-size:0.8rem; color:#4a627a;">${special}</span></li>`;
+      });
+      behaviorHtml += `</ul><div style="margin-top: 12px; background:#f8fafc; padding: 8px 12px; border-radius: 18px; font-size:0.8rem;">🔎 <strong>trade‑off insight</strong>: High precision reduces false positives, high recall reduces false negatives — match to business risk.</div>`;
+      return behaviorHtml;
+    }
+    
+    // ========== RECOMMENDATION ==========
+    function getRecommendation() {
+      const bestModelName = modelNames[bestModelKey];
+      const bestMet = modelsMetrics[bestModelKey];
+      const secondBest = modelKeys.filter(k => k !== bestModelKey).sort((a,b) => modelsMetrics[b].f1 - modelsMetrics[a].f1)[0];
+      const secondBestMet = modelsMetrics[secondBest];
+      
+      let recText = `<ul>
+        <li><strong>✅ Primary choice: ${bestModelName}</strong> — highest F1 (${(bestMet.f1*100).toFixed(1)}%) with solid accuracy ${(bestMet.accuracy*100).toFixed(1)}%.</li>`;
+      
+      if (bestModelKey === "lgbm") {
+        recText += `<li>🚀 LightGBM is ideal for production-scale or real-time inference due to leaf-wise efficiency and memory footprint.</li>`;
+      } else if (bestModelKey === "xgb") {
+        recText += `<li>⚡ XGBoost offers excellent regularization; use when you need feature importance and fine‑grained tuning.</li>`;
+      } else {
+        recText += `<li>🌲 Random Forest is highly interpretable & robust — great for compliance or when data has moderate noise.</li>`;
+      }
+      
+      if (secondBestMet.precision > bestMet.precision + 0.02) {
+        recText += `<li>🎯 For applications where <strong>false positives are costly</strong> (spam, fraud alerts), consider ${modelNames[secondBest]} (precision ${(secondBestMet.precision*100).toFixed(1)}% vs ${(bestMet.precision*100).toFixed(1)}%).</li>`;
+      }
+      if (secondBestMet.recall > bestMet.recall + 0.02) {
+        recText += `<li>🚨 If <strong>missing a positive case is critical</strong> (disease detection, threat hunting), ${modelNames[secondBest]} provides higher recall (${(secondBestMet.recall*100).toFixed(1)}%).</li>`;
+      }
+      
+      recText += `<li>📌 <strong>Ensemble hint</strong>: blending ${bestModelName} with ${modelNames[secondBest]} could further stabilize predictions.</li>
+      </ul>`;
+      return recText;
+    }
+    
+    // ========== CHART.JS ==========
+    let chartInstance = null;
+    function renderChart() {
+      const ctx = document.getElementById('metricsChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      
+      const labels = modelKeys.map(m => modelNames[m]);
+      const accuracyData = modelKeys.map(m => (modelsMetrics[m].accuracy * 100).toFixed(1));
+      const precisionData = modelKeys.map(m => (modelsMetrics[m].precision * 100).toFixed(1));
+      const recallData = modelKeys.map(m => (modelsMetrics[m].recall * 100).toFixed(1));
+      const f1Data = modelKeys.map(m => (modelsMetrics[m].f1 * 100).toFixed(1));
+      
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Accuracy %', data: accuracyData, backgroundColor: '#3b82f6', borderRadius: 8, barPercentage: 0.7, categoryPercentage: 0.8 },
+            { label: 'Precision %', data: precisionData, backgroundColor: '#10b981', borderRadius: 8, barPercentage: 0.7 },
+            { label: 'Recall %', data: recallData, backgroundColor: '#f59e0b', borderRadius: 8, barPercentage: 0.7 },
+            { label: 'F1 Score %', data: f1Data, backgroundColor: '#8b5cf6', borderRadius: 8, barPercentage: 0.7 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            tooltip: { mode: 'index', intersect: false, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } },
+            legend: { position: 'top', labels: { font: { size: 11, weight: '500' }, usePointStyle: true, boxWidth: 10 } }
+          },
+          scales: {
+            y: { title: { display: true, text: 'Score (%)', font: { weight: '500' } }, max: 100, beginAtZero: true, grid: { color: '#e9eef3' } },
+            x: { ticks: { font: { weight: '500' } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+    
+    function updateAll() {
+      renderTable();
+      updateBestModelCard();
+      document.getElementById("aiInsight").innerHTML = generateAIInsight();
+      document.getElementById("modelBehavior").innerHTML = getModelBehavior();
+      document.getElementById("recommendation").innerHTML = getRecommendation();
+      renderChart();
+    }
+    
+    updateAll();
+    window.addEventListener('resize', () => { if (chartInstance) chartInstance.resize(); });
+  })();
+</script>
+</body>
+</html>

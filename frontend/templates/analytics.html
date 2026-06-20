@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analytics — ETC System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ETC System</div>
+          <div class="logo-sub">Traffic Analysis</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="/">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/analytics" class="active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <p>Dataset: <span>ISCX-VPN-2016</span></p>
+    </div>
+  </aside>
+
+  <main class="main-content" style="display:flex;align-items:center;justify-content:center;">
+    <div class="analytics-hero">
+      <div style="width:64px;height:64px;background:#eff3ff;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+        <svg width="32" height="32" fill="none" stroke="#0057ff" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <h1>Advanced Analytics</h1>
+      <p style="margin-top:10px;max-width:440px;margin-left:auto;margin-right:auto;">
+        Deep-dive analytics and Streamlit dashboard integration coming soon.<br>
+        This will include confusion matrices, per-class metrics, and flow timeline visualizations.
+      </p>
+      <a href="/" class="back-link">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
